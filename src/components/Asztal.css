@@ -1,0 +1,44 @@
+.table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s, border 0.2s;
+  user-select: none;
+}
+
+.category-competition {
+  border: 4px solid #333;
+}
+
+.category-normal {
+  border: 2px solid #555;
+}
+
+.category-kids {
+  border: 2px dashed #333;
+  background-image: radial-gradient(#fff 15%, transparent 16%);
+  background-size: 10px 10px;
+}
+
+.table-container.selected {
+  box-shadow: 0 0 15px 5px rgba(42, 255, 0, 0.8);
+  border-color: rgba(42, 255, 27, 1);
+}
+
+.table-label {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  text-transform: capitalize;
+}
+
+.lock-icon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 16px;
+}
