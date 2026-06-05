@@ -37,14 +37,10 @@ h1 {
     text-align: center;
 }
 
-.main-content::before {
+.main-contentwith-details::before {
   content: "";
   flex-basis: 300px;
   flex-shrink: 1000;
-}
-
-.main-contentwith-details::before {
-  display: none;
 }
 
 .add-table-btn {
