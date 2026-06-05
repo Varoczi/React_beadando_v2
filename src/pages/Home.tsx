@@ -273,7 +273,7 @@ function Home() {
     return (
             <div className="app-container">
             <h1>Roomlie {isAdmin && "- Teremkezelő"}</h1>
-            <div className={`main-content ${user ? 'with-details' : ''}`}>
+            <div className={`main-content${user ? 'with-details' : ''}`}>
                 <Terem
                 tables={tables} 
                 roomSize={roomSize}
