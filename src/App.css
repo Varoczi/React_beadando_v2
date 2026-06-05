@@ -13,6 +13,17 @@ body {
   align-items: center;
 }
 
+.main-contentwith-details {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
