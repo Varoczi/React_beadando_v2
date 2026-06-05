@@ -1,29 +1,29 @@
-import { useState } from 'react';
-import type { TableType, TableCategory, TableData } from '../types';
-import './UjAsztal.css';
+import { useState } from 'react'
+import type { TableType, TableCategory, TableData } from '../types'
+import './UjAsztal.css'
 
 interface AddTableProps {
-  onClose: () => void;
-  onStartPlacement: (draftData: Omit<TableData, 'id' | 'position'>) => void;
+  onClose: () => void
+  onStartPlacement: (draftData: Omit<TableData, 'id' | 'position'>) => void
 }
 
 function UjAsztal({ onClose, onStartPlacement }: AddTableProps) {
-  const [type, setType] = useState<TableType>('foosball');
-  const [category, setCategory] = useState<TableCategory>('normal');
-  const [color, setColor] = useState('#3366cc');
-  const [status, setStatus] = useState(10);
-  const [isLocked, setIsLocked] = useState(false);
+  const [type, setType] = useState<TableType>('foosball')
+  const [category, setCategory] = useState<TableCategory>('normal')
+  const [color, setColor] = useState('blue')
+  const [status, setStatus] = useState(10)
+  const [isLocked, setIsLocked] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     onStartPlacement({
       type,
       category,
       color,
       status,
-      'is-locked': isLocked
-    });
-  };
+      'isLocked': isLocked
+    })
+  }
 
   return (
     <div className="modal-overlay">
@@ -51,7 +51,13 @@ function UjAsztal({ onClose, onStartPlacement }: AddTableProps) {
 
           <label>
             Szín:
-            <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+            <select value={color} onChange={(e) => setColor(e.target.value)}>
+              <option value="red">Piros</option>
+              <option value="blue">Kék</option>
+              <option value="green">Zöld</option>
+              <option value="yellow">Sárga</option>
+              <option value="purple">Lila</option>
+            </select>
           </label>
 
           <label>
@@ -74,4 +80,4 @@ function UjAsztal({ onClose, onStartPlacement }: AddTableProps) {
   );
 }
 
-export default UjAsztal;
+export default UjAsztal

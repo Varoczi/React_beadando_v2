@@ -31,7 +31,7 @@ function Asztal({ data, isSelected, onSelect, isConflicted, onDragStart }: Table
     height: `${height}px`,
     backgroundColor: data.color,
     opacity: opacityValue,
-    cursor: data['is-locked'] ? 'not-allowed' : 'grab',
+    cursor: data['isLocked'] ? 'not-allowed' : 'grab',
     border: isConflicted ? '3px solid red' : undefined,
     boxShadow: isConflicted ? '0 0 10px red' : undefined,
     borderColor: isConflicted ? 'red' : undefined,
@@ -39,7 +39,7 @@ function Asztal({ data, isSelected, onSelect, isConflicted, onDragStart }: Table
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (data['is-locked']) return;
+    if (data['isLocked']) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -59,9 +59,9 @@ function Asztal({ data, isSelected, onSelect, isConflicted, onDragStart }: Table
       onMouseDown={handleMouseDown}
     >
       <span className="table-label">{data.type}</span>
-      {data['is-locked'] && <span className="lock-icon">🔒</span>}
+      {data['isLocked'] && <span className="lock-icon">🔒</span>}
     </div>
   );
 }
 
-export default Asztal;
+export default Asztal

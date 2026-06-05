@@ -1,0 +1,156 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f8f9fa;
+  position: relative;
+  z-index: 100;
+  transition: all 0.2s ease;
+}
+
+body.dark-mode .navbar {
+  background-color: #2d3748;
+  border-bottom-color: #4a5568;
+}
+
+.navbar-brand-section {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #333;
+}
+
+body.dark-mode .navbar-logo {
+  color: #f7fafc;
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #333;
+  margin-left: 1rem;
+}
+
+body.dark-mode .theme-toggle-btn {
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.hamburger-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #333;
+  line-height: 1;
+}
+
+body.dark-mode .hamburger-menu-btn {
+  color: #f7fafc;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+body.dark-mode .nav-link {
+  color: #e2e8f0;
+}
+
+.user-greeting {
+  margin-right: 20px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+body.dark-mode .user-greeting {
+  color: #63b3ed;
+}
+
+.logout-btn {
+  padding: 5px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .hamburger-menu-btn {
+    display: block;
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    gap: 15px;
+    align-items: flex-start;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  body.dark-mode .navbar-links {
+    background-color: #2d3748;
+    border-bottom-color: #4a5568;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .nav-link {
+    margin-left: 0;
+    width: 100%;
+    padding: 8px 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  body.dark-mode .nav-link {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .user-greeting {
+    margin-right: 0;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 1.1rem;
+  }
+
+  .logout-btn {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin-top: 5px;
+  }
+}

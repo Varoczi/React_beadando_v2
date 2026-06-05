@@ -13,5 +13,5 @@ export interface TableData {
   color: string;
   status: number;
   position: Position;
-  'is-locked': boolean;
+  isLocked: boolean;
 }
