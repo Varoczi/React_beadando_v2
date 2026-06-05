@@ -6,7 +6,7 @@ import Register from './pages/Register'
 import Foglalasaim from './pages/Foglalasaim'
 import AdminFoglalasok from './pages/AdminFoglalasok'
 import { Toaster } from 'react-hot-toast'
-import './app.css'
+import './App.css'
 
 const NotFound = () => <div style={{ padding: '20px' }}><h2>404 - Az oldal nem található</h2></div>
 
