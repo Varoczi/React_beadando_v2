@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { loginSuccess } from '../store/authSlice'
 import { loginUser } from '../api/auth'
 import toast from 'react-hot-toast'
+import './Auth.css'
 
 function Login() {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -27,44 +27,48 @@ function Login() {
       }))
 
       toast.success('Sikeres bejelentkezés!')
-
       navigate('/')
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error('Hibás adatok!')
-      setError(err.message || 'Sikertelen bejelentkezés!')
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('Váratlan hiba történt bejelentkezés közben.')
+      }
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+    <div className="auth-container">
       <h2>Bejelentkezés</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+      
+      {error && <div className="auth-message error">{error}</div>}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+        <div className="auth-form-group">
+          <label>Email</label>
           <input 
             type="email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
-            style={{ width: '95%', padding: '8px' }}
+            className="auth-input"
           />
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Jelszó</label>
+        <div className="auth-form-group">
+          <label>Jelszó</label>
           <input 
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             required 
-            style={{ width: '95%', padding: '8px' }}
+            className="auth-input"
           />
         </div>
 
-        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+        <button type="submit" className="auth-submit-btn">
           Bejelentkezés
         </button>
       </form>

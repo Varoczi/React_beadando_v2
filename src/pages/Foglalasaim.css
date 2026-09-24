@@ -211,3 +211,43 @@ body.dark-mode .admin-booking-card.pending {
     flex-direction: column;
   }
 }
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.admin-card-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.admin-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-accept, .btn-decline {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.btn-accept {
+  background-color: #48bb78;
+}
+.btn-accept:hover { background-color: #38a169; }
+
+.btn-decline {
+  background-color: #f56565;
+}
+.btn-decline:hover { background-color: #e53e3e; }
