@@ -71,9 +71,8 @@ To run this project on your local machine:
     npm run dev
   ```
 
-🔐 Demo Accounts
-Since the application uses a simulated backend, you can test both roles using these credentials, or register a new user:
+## 🔐 Demo Accounts
 
-Admin: admin@example.com | Password: admin123
-
-User: Register any new account through the UI.
+*   Since the application uses a simulated backend, you can test both roles using these credentials, or register a new user:
+*   Admin: admin@example.com | Password: admin123
+*   User: Register any new account through the UI.
