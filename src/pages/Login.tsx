@@ -1,40 +1,45 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { loginSuccess } from '../store/authSlice'
-import { loginUser } from '../api/auth'
-import toast from 'react-hot-toast'
-import './Auth.css'
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginSuccess } from "../store/authSlice";
+import { loginUser } from "../api/auth";
+import toast from "react-hot-toast";
+import "./Auth.css";
 
 function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     try {
-      const response = await loginUser(email, password)
-      
-      dispatch(loginSuccess({
-        token: response.token,
-        user: response.user || { name: 'Admin', email: email, role: email === 'admin@example.com' ? 'admin' : 'user' }
-      }))
+      const response = await loginUser(email, password);
 
-      toast.success('Sikeres bejelentkezés!')
-      navigate('/')
-      
+      dispatch(
+        loginSuccess({
+          token: response.token,
+          user: response.user || {
+            name: "Admin",
+            email: email,
+            role: email === "admin@example.com" ? "admin" : "user",
+          },
+        }),
+      );
+
+      toast.success("Sikeres bejelentkezés!");
+      navigate("/");
     } catch (err: unknown) {
-      toast.error('Hibás adatok!')
+      toast.error("Hibás adatok!");
       if (err instanceof Error) {
-        setError(err.message)
+        setError(err.message);
       } else {
-        setError('Váratlan hiba történt bejelentkezés közben.')
+        setError("Váratlan hiba történt bejelentkezés közben.");
       }
     }
   };
@@ -42,28 +47,28 @@ function Login() {
   return (
     <div className="auth-container">
       <h2>Bejelentkezés</h2>
-      
+
       {error && <div className="auth-message error">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="auth-form-group">
           <label>Email</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
             className="auth-input"
           />
         </div>
 
         <div className="auth-form-group">
           <label>Jelszó</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
             className="auth-input"
           />
         </div>
@@ -73,7 +78,7 @@ function Login() {
         </button>
       </form>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

@@ -1,21 +1,27 @@
-import { useState, useMemo } from 'react';
-import type { TableData } from '../types';
-import { getTableDimensions } from '../utils';
+import { useState, useMemo } from "react";
+import type { TableData } from "../types";
+import { getTableDimensions } from "../utils";
 
 export const useTablePhysics = (
   tables: TableData[],
   roomSize: { width: number; height: number },
   onTableMove: (id: number, newPosition: { x: number; y: number }) => void,
-  onDragComplete: (id: number) => void
+  onDragComplete: (id: number) => void,
 ) => {
   const [draggingId, setDraggingId] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const hasPhysicalCollision = (x: number, y: number, w: number, h: number, ignoreId: number | null) => {
-    return tables.some(t => {
+  const hasPhysicalCollision = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    ignoreId: number | null,
+  ) => {
+    return tables.some((t) => {
       if (t.id === ignoreId) return false;
       const tDim = getTableDimensions(t.type);
-      
+
       return !(
         x + w <= t.position.x ||
         x >= t.position.x + tDim.w ||
@@ -28,25 +34,24 @@ export const useTablePhysics = (
   const conflictedIds = useMemo(() => {
     const ids = new Set<number>();
 
-    tables.forEach(tableA => {
+    tables.forEach((tableA) => {
       const dimA = getTableDimensions(tableA.type);
       const auraA = {
         left: tableA.position.x - dimA.buffer,
         right: tableA.position.x + dimA.w + dimA.buffer,
         top: tableA.position.y - dimA.buffer,
-        bottom: tableA.position.y + dimA.h + dimA.buffer
+        bottom: tableA.position.y + dimA.h + dimA.buffer,
       };
 
-      tables.forEach(tableB => {
+      tables.forEach((tableB) => {
         if (tableA.id === tableB.id) return;
         const dimB = getTableDimensions(tableB.type);
 
-        const noOverlap = (
+        const noOverlap =
           auraA.right <= tableB.position.x ||
           auraA.left >= tableB.position.x + dimB.w ||
           auraA.bottom <= tableB.position.y ||
-          auraA.top >= tableB.position.y + dimB.h
-        );
+          auraA.top >= tableB.position.y + dimB.h;
 
         if (!noOverlap) ids.add(tableA.id);
       });
@@ -60,21 +65,25 @@ export const useTablePhysics = (
     setDragOffset({ x: offsetX, y: offsetY });
   };
 
-  const handleDragMove = (e: React.MouseEvent, roomRect: DOMRect) => {
+  const handleDragMove = (
+    clientX: number,
+    clientY: number,
+    roomRect: DOMRect,
+  ) => {
     if (draggingId === null) return;
-
-    const table = tables.find(t => t.id === draggingId);
+    const table = tables.find((t) => t.id === draggingId);
     if (!table) return;
 
-    let newX = Math.round(e.clientX - roomRect.left - dragOffset.x);
-    let newY = Math.round(e.clientY - roomRect.top - dragOffset.y);
+    let newX = Math.round(clientX - roomRect.left - dragOffset.x);
+    let newY = Math.round(clientY - roomRect.top - dragOffset.y);
 
     const { w, h, buffer } = getTableDimensions(table.type);
-    
+
     if (newX < buffer) newX = buffer;
     if (newY < buffer) newY = buffer;
     if (newX + w + buffer > roomSize.width) newX = roomSize.width - w - buffer;
-    if (newY + h + buffer > roomSize.height) newY = roomSize.height - h - buffer;
+    if (newY + h + buffer > roomSize.height)
+      newY = roomSize.height - h - buffer;
 
     if (hasPhysicalCollision(newX, newY, w, h, draggingId)) return;
 
@@ -94,6 +103,6 @@ export const useTablePhysics = (
     hasPhysicalCollision,
     handleDragStart,
     handleDragMove,
-    handleDragEnd
+    handleDragEnd,
   };
 };

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import type { TableData } from '../types.ts';
-import './ReszletesNezet.css';
-import type { RootState } from '../store/store.ts';
-import { fetchTableTimeslots, type Timeslot } from '../api/tables';
-import { createBooking } from '../api/bookings';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import type { TableData } from "../types.ts";
+import "./ReszletesNezet.css";
+import type { RootState } from "../store/store.ts";
+import { fetchTableTimeslots, type Timeslot } from "../api/tables";
+import { createBooking } from "../api/bookings";
+import toast from "react-hot-toast";
 
 interface TableDetailsProps {
   table: TableData | null;
@@ -14,31 +14,39 @@ interface TableDetailsProps {
   onClose: () => void;
 }
 
-function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetailsProps) {
+function ReszletesNezet({
+  table,
+  onDelete,
+  onStatusChange,
+  onClose,
+}: TableDetailsProps) {
   const { user } = useSelector((state: RootState) => state.auth);
   const isAdmin = user?.role === "admin";
   const isUser = user?.role === "user";
 
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState("");
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<Timeslot | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState("");
   const [headcount, setHeadcount] = useState(1);
-  const [notes, setNotes] = useState('');
-  const [bookingMessage, setBookingMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [notes, setNotes] = useState("");
+  const [bookingMessage, setBookingMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
-    setDate('');
+    setDate("");
     setTimeslots([]);
     setSelectedSlot(null);
     setBookingMessage(null);
-    setPhone('');
+    setPhone("");
     setHeadcount(1);
-    setNotes('');
+    setNotes("");
   }, [table]);
 
   useEffect(() => {
@@ -60,7 +68,12 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
     loadTimeslots();
   }, [date, table]);
 
-  if (!table) return <div className="details-placeholder">Válassz ki egy asztalt a részletekért!</div>;
+  if (!table)
+    return (
+      <div className="details-placeholder">
+        Válassz ki egy asztalt a részletekért!
+      </div>
+    );
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,16 +89,22 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
         email,
         phone,
         headcount,
-        notes
+        notes,
       });
-      setBookingMessage({ type: 'success', text: 'Sikeres foglalás! Az adminisztrátor jóváhagyására vár.' });
+      setBookingMessage({
+        type: "success",
+        text: "Sikeres foglalás! Az adminisztrátor jóváhagyására vár.",
+      });
       setSelectedSlot(null);
-      setDate('');
+      setDate("");
       setTimeslots([]);
-      toast.success("Időpont sikeresen lefoglalva!")
+      toast.success("Időpont sikeresen lefoglalva!");
     } catch (err: any) {
-      setBookingMessage({ type: 'error', text: err.message || 'Hiba történt a foglalás során!' });
-      toast.error("Meghiúsult foglalás!")
+      setBookingMessage({
+        type: "error",
+        text: err.message || "Hiba történt a foglalás során!",
+      });
+      toast.error("Meghiúsult foglalás!");
     }
   };
 
@@ -93,35 +112,50 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
     <div className="table-details">
       <div className="details-header">
         <h3>Asztal Részletei (#{table.id})</h3>
-        <button className="close-btn" onClick={onClose}>×</button>
+        <button className="close-btn" onClick={onClose}>
+          ×
+        </button>
       </div>
-      
+
       <div className="details-body">
-        <p><strong>Típus:</strong> {table.type}</p>
-        <p><strong>Kategória:</strong> {table.category}</p>
-        <p><strong>Szín:</strong> {table.color}</p>
-        <p><strong>Pozíció:</strong> X: {table.position.x}, Y: {table.position.y}</p>
-        
+        <p>
+          <strong>Típus:</strong> {table.type}
+        </p>
+        <p>
+          <strong>Kategória:</strong> {table.category}
+        </p>
+        <p>
+          <strong>Szín:</strong> {table.color}
+        </p>
+        <p>
+          <strong>Pozíció:</strong> X: {table.position.x}, Y: {table.position.y}
+        </p>
+
         <div className="status-control">
-          <label><strong>Állapot (1-10):</strong> {table.status}</label>
+          <label>
+            <strong>Állapot (1-10):</strong> {table.status}
+          </label>
           {isAdmin && (
-            <input 
-              type="range" 
-              min="1" 
-              max="10" 
-              value={table.status} 
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={table.status}
               onChange={(e) => onStatusChange(table.id, Number(e.target.value))}
             />
           )}
         </div>
 
-        <p><strong>Státusz:</strong> {table['isLocked'] ? "🔒 Rögzítve" : "🔓 Mozgatható"}</p>
+        <p>
+          <strong>Státusz:</strong>{" "}
+          {table["isLocked"] ? "🔒 Rögzítve" : "🔓 Mozgatható"}
+        </p>
       </div>
 
       {isUser && (
         <div className="booking-section">
           <h4>Asztal foglalása</h4>
-          
+
           {bookingMessage && (
             <div className={`booking-alert ${bookingMessage.type}`}>
               {bookingMessage.text}
@@ -130,15 +164,17 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
 
           <label className="booking-label">
             <strong>Válassz napot:</strong>
-            <input 
-              type="date" 
-              value={date} 
-              min={new Date().toISOString().split('T')[0]} 
-              onChange={(e) => setDate(e.target.value)} 
+            <input
+              type="date"
+              value={date}
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => setDate(e.target.value)}
             />
           </label>
 
-          {loadingSlots && <p className="loading-text">Időpontok betöltése...</p>}
+          {loadingSlots && (
+            <p className="loading-text">Időpontok betöltése...</p>
+          )}
 
           {date && timeslots.length > 0 && (
             <div className="timeslots-container">
@@ -149,7 +185,7 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
                     key={index}
                     type="button"
                     disabled={!slot.isAvailable}
-                    className={`timeslot-btn ${!slot.isAvailable ? 'taken' : ''} ${selectedSlot === slot ? 'selected' : ''}`}
+                    className={`timeslot-btn ${!slot.isAvailable ? "taken" : ""} ${selectedSlot === slot ? "selected" : ""}`}
                     onClick={() => setSelectedSlot(slot)}
                   >
                     {slot.startTime} - {slot.endTime}
@@ -160,39 +196,72 @@ function ReszletesNezet({ table, onDelete, onStatusChange, onClose }: TableDetai
           )}
 
           {date && timeslots.length === 0 && !loadingSlots && (
-            <p className="no-slots">Erre a napra nincsenek elérhető időpontok.</p>
+            <p className="no-slots">
+              Erre a napra nincsenek elérhető időpontok.
+            </p>
           )}
 
           {selectedSlot && (
             <form onSubmit={handleBookingSubmit} className="booking-form">
-              <h5>Foglalási adatok a következő időpontra: {selectedSlot.startTime} - {selectedSlot.endTime}</h5>
-              
+              <h5>
+                Foglalási adatok a következő időpontra: {selectedSlot.startTime}{" "}
+                - {selectedSlot.endTime}
+              </h5>
+
               <label>
                 Név:
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
               </label>
 
               <label>
                 Email:
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </label>
 
               <label>
                 Telefon:
-                <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+36 30 123 4567" required />
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+36 30 123 4567"
+                  required
+                />
               </label>
 
               <label>
                 Résztvevők száma:
-                <input type="number" min="1" value={headcount} onChange={(e) => setHeadcount(Number(e.target.value))} required />
+                <input
+                  type="number"
+                  min="1"
+                  value={headcount}
+                  onChange={(e) => setHeadcount(Number(e.target.value))}
+                  required
+                />
               </label>
 
               <label>
                 Megjegyzés (opcionális):
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                />
               </label>
 
-              <button type="submit" className="submit-booking-btn">Asztal lefoglalása</button>
+              <button type="submit" className="submit-booking-btn">
+                Asztal lefoglalása
+              </button>
             </form>
           )}
         </div>

@@ -1,5 +1,5 @@
-export type TableType = 'snooker' | 'air-hockey' | 'foosball';
-export type TableCategory = 'competition' | 'normal' | 'kids';
+export type TableType = "snooker" | "air-hockey" | "foosball";
+export type TableCategory = "competition" | "normal" | "kids";
 
 export interface Position {
   x: number;

@@ -1,83 +1,109 @@
-import { useState, useEffect } from 'react'
-import type { TableData } from '../types'
-import './Home.css'
-import { getTableDimensions } from '../utils'
-import Terem from '../components/Terem'
-import ReszletesNezet from '../components/ReszletesNezet'
-import Osszesito from '../components/Osszesito'
-import UjAsztal from '../components/UjAsztal'
-import { useSelector } from 'react-redux'
-import { type RootState } from '../store/store'
-import { fetchTables, updateTablePosition, createTable, updateTableDetails, deleteTable } from '../api/tables'
-import toast from 'react-hot-toast'
-import { useTablePhysics } from '../hooks/useTablePhysics'
+import { useState, useEffect } from "react";
+import type { TableData } from "../types";
+import "./Home.css";
+import { getTableDimensions } from "../utils";
+import Terem from "../components/Terem";
+import ReszletesNezet from "../components/ReszletesNezet";
+import Osszesito from "../components/Osszesito";
+import UjAsztal from "../components/UjAsztal";
+import { useSelector } from "react-redux";
+import { type RootState } from "../store/store";
+import {
+  fetchTables,
+  updateTablePosition,
+  createTable,
+  updateTableDetails,
+  deleteTable,
+} from "../api/tables";
+import toast from "react-hot-toast";
+import { useTablePhysics } from "../hooks/useTablePhysics";
 
 function Home() {
-  const { user } = useSelector((state: RootState) => state.auth)
-  const isAdmin = user?.role === 'admin'
+  const { user } = useSelector((state: RootState) => state.auth);
+  const isAdmin = user?.role === "admin";
 
-  const [tables, setTables] = useState<TableData[]>([])
-  const [selectedTableId, setSelectedTableId] = useState<number | null>(null)
-  const [roomSize, setRoomSize] = useState({ width: 1200, height: 700 })
-  const [isAddTableOpen, setIsAddTableOpen] = useState(false)
-  const [draftTable, setDraftTable] = useState<Omit<TableData, 'id' | 'position'> | null>(null)
+  const [tables, setTables] = useState<TableData[]>([]);
+  const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
+  const [roomSize, setRoomSize] = useState({ width: 1200, height: 700 });
+  const [isAddTableOpen, setIsAddTableOpen] = useState(false);
+  const [draftTable, setDraftTable] = useState<Omit<
+    TableData,
+    "id" | "position"
+  > | null>(null);
 
   useEffect(() => {
     fetchTables()
       .then(setTables)
-      .catch(err => console.error("Hiba az asztalok betöltésekor:", err))
-  }, [])
+      .catch((err) => console.error("Hiba az asztalok betöltésekor:", err));
+  }, []);
 
   const getMaxRoomWidth = () => {
-    const isMobile = window.innerWidth <= 850
-    const padding = 40
-    const detailsPanelWidth = user ? 330 : 0
-    return isMobile ? window.innerWidth - padding : window.innerWidth - detailsPanelWidth - padding
+    const isMobile = window.innerWidth <= 850;
+    const padding = 40;
+    const detailsPanelWidth = user ? 330 : 0;
+    return isMobile
+      ? window.innerWidth - padding
+      : window.innerWidth - detailsPanelWidth - padding;
   };
 
   useEffect(() => {
     const handleResize = () => {
-      const maxAvailableWidth = getMaxRoomWidth()
-      setRoomSize(prev => prev.width > maxAvailableWidth ? { ...prev, width: maxAvailableWidth } : prev)
-    }
-    window.addEventListener('resize', handleResize)
-    handleResize()
-    return () => window.removeEventListener('resize', handleResize)
-  }, [user])
+      const maxAvailableWidth = getMaxRoomWidth();
+      setRoomSize((prev) =>
+        prev.width > maxAvailableWidth
+          ? { ...prev, width: maxAvailableWidth }
+          : prev,
+      );
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, [user]);
 
   useEffect(() => {
-    setTables(prevTables => {
-      let hasChanges = false
-      const updatedTables = prevTables.map(table => {
-        const { w, h, buffer } = getTableDimensions(table.type)
-        let newX = table.position.x
-        let newY = table.position.y
+    setTables((prevTables) => {
+      let hasChanges = false;
+      const updatedTables = prevTables.map((table) => {
+        const { w, h, buffer } = getTableDimensions(table.type);
+        let newX = table.position.x;
+        let newY = table.position.y;
 
-        if (newX + w + buffer > roomSize.width) { newX = Math.max(buffer, roomSize.width - w - buffer); hasChanges = true; }
-        if (newY + h + buffer > roomSize.height) { newY = Math.max(buffer, roomSize.height - h - buffer); hasChanges = true; }
+        if (newX + w + buffer > roomSize.width) {
+          newX = Math.max(buffer, roomSize.width - w - buffer);
+          hasChanges = true;
+        }
+        if (newY + h + buffer > roomSize.height) {
+          newY = Math.max(buffer, roomSize.height - h - buffer);
+          hasChanges = true;
+        }
 
-        return (newX !== table.position.x || newY !== table.position.y) 
-          ? { ...table, position: { x: newX, y: newY } } 
+        return newX !== table.position.x || newY !== table.position.y
+          ? { ...table, position: { x: newX, y: newY } }
           : table;
       });
-      return hasChanges ? updatedTables : prevTables
+      return hasChanges ? updatedTables : prevTables;
     });
-  }, [roomSize.width, roomSize.height])
+  }, [roomSize.width, roomSize.height]);
 
-  const handleTableMove = (id: number, newPosition: { x: number; y: number }) => {
-    setTables(prev => prev.map(t => t.id === id ? { ...t, position: newPosition } : t));
+  const handleTableMove = (
+    id: number,
+    newPosition: { x: number; y: number },
+  ) => {
+    setTables((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, position: newPosition } : t)),
+    );
   };
 
   const handleDragComplete = async (id: number) => {
-    const movedTable = tables.find(t => t.id === id)
-    if (!movedTable) return
+    const movedTable = tables.find((t) => t.id === id);
+    if (!movedTable) return;
 
     try {
-      await updateTablePosition(id, movedTable.position)
-      toast.success("Helyzet sikeresen módosítva!")
+      await updateTablePosition(id, movedTable.position);
+      toast.success("Helyzet sikeresen módosítva!");
     } catch (error) {
-      console.error(error)
-      toast.error("Nem sikerült módosítani a pozíciót!")
+      console.error(error);
+      toast.error("Nem sikerült módosítani a pozíciót!");
     }
   };
 
@@ -87,10 +113,14 @@ function Home() {
     hasPhysicalCollision,
     handleDragStart,
     handleDragMove,
-    handleDragEnd
+    handleDragEnd,
   } = useTablePhysics(tables, roomSize, handleTableMove, handleDragComplete);
 
-  const handleDragStartAuth = (id: number, offsetX: number, offsetY: number) => {
+  const handleDragStartAuth = (
+    id: number,
+    offsetX: number,
+    offsetY: number,
+  ) => {
     if (!isAdmin) return;
     handleDragStart(id, offsetX, offsetY);
     setSelectedTableId(id);
@@ -98,59 +128,72 @@ function Home() {
 
   const handleRoomClick = async (x: number, y: number) => {
     if (!draftTable) return;
-    const { w, h, buffer } = getTableDimensions(draftTable.type)
+    const { w, h, buffer } = getTableDimensions(draftTable.type);
 
-    if (x - buffer < 0 || y - buffer < 0 || x + w + buffer > roomSize.width || y + h + buffer > roomSize.height) {
-      return toast.error('Itt nem fér el! Túl közel van a falhoz (helyigény sérül).')
+    if (
+      x - buffer < 0 ||
+      y - buffer < 0 ||
+      x + w + buffer > roomSize.width ||
+      y + h + buffer > roomSize.height
+    ) {
+      return toast.error(
+        "Itt nem fér el! Túl közel van a falhoz (helyigény sérül).",
+      );
     }
 
     if (hasPhysicalCollision(x, y, w, h, null)) {
-      return toast.error('Ide nem teheted, mert egy másik asztalra lógna!')
+      return toast.error("Ide nem teheted, mert egy másik asztalra lógna!");
     }
 
-    const autoGeneratedName = `Asztal ${tables.length + 1}`
-    const tableDataToSend = { ...draftTable, name: autoGeneratedName, position: { x, y } }
+    const autoGeneratedName = `Asztal ${tables.length + 1}`;
+    const tableDataToSend = {
+      ...draftTable,
+      name: autoGeneratedName,
+      position: { x, y },
+    };
 
     try {
-      const savedTable = await createTable(tableDataToSend)
-      setTables([...tables, savedTable])
-      toast.success("Asztal sikeresen hozzáadva")
-      setDraftTable(null)
+      const savedTable = await createTable(tableDataToSend);
+      setTables([...tables, savedTable]);
+      toast.success("Asztal sikeresen hozzáadva");
+      setDraftTable(null);
     } catch (error) {
-      console.error(error)
-      toast.error("Nem sikerült elmenteni az új asztalt a szerverre!")
+      console.error(error);
+      toast.error("Nem sikerült elmenteni az új asztalt a szerverre!");
     }
-  }
+  };
 
   const handleDeleteTable = async (id: number) => {
     try {
-      await deleteTable(id)
-      setTables(tables.filter(t => t.id !== id))
+      await deleteTable(id);
+      setTables(tables.filter((t) => t.id !== id));
       setSelectedTableId(null);
-      toast.success("Asztal törlésre került!")
+      toast.success("Asztal törlésre került!");
     } catch (error) {
-      toast.error('Nem sikerült törölni az asztalt!')
+      toast.error("Nem sikerült törölni az asztalt!");
     }
-  }
+  };
 
   const handleStatusChange = async (id: number, newStatus: number) => {
-    setTables(tables.map(t => t.id === id ? { ...t, status: newStatus } : t))
+    setTables(
+      tables.map((t) => (t.id === id ? { ...t, status: newStatus } : t)),
+    );
     try {
-      await updateTableDetails(id, { status: newStatus })
-      toast.success("Módosítások sikeresen elmentve!")
+      await updateTableDetails(id, { status: newStatus });
+      toast.success("Módosítások sikeresen elmentve!");
     } catch (error) {
-      toast.error("Nem sikerült menteni a módosítást a szerverre!")
+      toast.error("Nem sikerült menteni a módosítást a szerverre!");
     }
-  }
+  };
 
-  const selectedTable = tables.find(t => t.id === selectedTableId) || null;
+  const selectedTable = tables.find((t) => t.id === selectedTableId) || null;
 
   return (
     <div className="app-container">
       <h1>Roomlie {isAdmin && "- Teremkezelő"}</h1>
-      <div className={`main-content ${user ? 'with-details' : ''}`}>
+      <div className={`main-content ${user ? "with-details" : ""}`}>
         <Terem
-          tables={tables} 
+          tables={tables}
           roomSize={roomSize}
           selectedTableId={selectedTableId}
           onSelectTable={setSelectedTableId}
@@ -163,7 +206,7 @@ function Home() {
           draggingId={draggingId}
         />
         {user && (
-          <ReszletesNezet 
+          <ReszletesNezet
             table={selectedTable}
             onDelete={handleDeleteTable}
             onStatusChange={handleStatusChange}
@@ -171,26 +214,38 @@ function Home() {
           />
         )}
       </div>
-      
-      <div className='osszesito'>
-        <Osszesito tables={tables}/>
+
+      <div className="osszesito">
+        <Osszesito tables={tables} />
       </div>
-      
+
       {isAdmin && (
         <div className="toolbar">
-          <button className="add-table-btn" onClick={() => setIsAddTableOpen(true)}>Új asztal hozzáadása</button>
-          {draftTable && <span className="placement-warning">Kattints a teremre az asztal lehelyezéséhez!</span>}
+          <button
+            className="add-table-btn"
+            onClick={() => setIsAddTableOpen(true)}
+          >
+            Új asztal hozzáadása
+          </button>
+          {draftTable && (
+            <span className="placement-warning">
+              Kattints a teremre az asztal lehelyezéséhez!
+            </span>
+          )}
         </div>
       )}
 
       {isAdmin && isAddTableOpen && (
-        <UjAsztal 
-          onClose={() => setIsAddTableOpen(false)} 
-          onStartPlacement={(draft) => { setDraftTable(draft); setIsAddTableOpen(false); }} 
+        <UjAsztal
+          onClose={() => setIsAddTableOpen(false)}
+          onStartPlacement={(draft) => {
+            setDraftTable(draft);
+            setIsAddTableOpen(false);
+          }}
         />
       )}
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
