@@ -44,20 +44,20 @@ function Home() {
     const handleResize = () => {
       const isMobile = window.innerWidth <= 850;
       const padding = 40;
-      const detailsPanelWidth = (user && !isMobile) ? 330 : 0; 
+      const detailsPanelWidth = user && !isMobile ? 330 : 0;
       const maxAvailableWidth = window.innerWidth - detailsPanelWidth - padding;
-      
+
       if (maxAvailableWidth < ROOM_WIDTH) {
         setScale(maxAvailableWidth / ROOM_WIDTH);
       } else {
         setScale(1);
       }
-    }
+    };
 
-    window.addEventListener('resize', handleResize)
-    handleResize()
-    return () => window.removeEventListener('resize', handleResize)
-  }, [user])
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, [user]);
 
   useEffect(() => {
     setTables((prevTables) => {
@@ -113,7 +113,13 @@ function Home() {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
-  } = useTablePhysics(tables, roomSize, scale, handleTableMove, handleDragComplete);
+  } = useTablePhysics(
+    tables,
+    roomSize,
+    scale,
+    handleTableMove,
+    handleDragComplete,
+  );
 
   const handleDragStartAuth = (
     id: number,
@@ -173,12 +179,15 @@ function Home() {
     }
   };
 
-  const handleStatusChange = async (id: number, newStatus: number) => {
+  const handleStatusChangeLocally = (id: number, newStatus: number) => {
     setTables(
       tables.map((t) => (t.id === id ? { ...t, status: newStatus } : t)),
     );
+  };
+
+  const handleStatusCommit = async (id: number, finalStatus: number) => {
     try {
-      await updateTableDetails(id, { status: newStatus });
+      await updateTableDetails(id, { status: finalStatus });
       toast.success("Módosítások sikeresen elmentve!");
     } catch (error) {
       toast.error("Nem sikerült menteni a módosítást a szerverre!");
@@ -191,25 +200,26 @@ function Home() {
     <div className="app-container">
       <h1>Roomlie {isAdmin && "- Teremkezelő"}</h1>
       <div className={`main-content ${user ? "with-details" : ""}`}>
-        <Terem
-          tables={tables}
-          roomSize={roomSize}
-          scale={scale}
-          selectedTableId={selectedTableId}
-          onSelectTable={setSelectedTableId}
-          onRoomClick={handleRoomClick}
-          isPlacementMode={draftTable !== null}
-          conflictedTableIds={conflictedIds}
-          onDragStart={handleDragStartAuth}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-          draggingId={draggingId}
-        />
+          <Terem
+            tables={tables}
+            roomSize={roomSize}
+            scale={scale}
+            selectedTableId={selectedTableId}
+            onSelectTable={setSelectedTableId}
+            onRoomClick={handleRoomClick}
+            isPlacementMode={draftTable !== null}
+            conflictedTableIds={conflictedIds}
+            onDragStart={handleDragStartAuth}
+            onDragMove={handleDragMove}
+            onDragEnd={handleDragEnd}
+            draggingId={draggingId}
+          />
         {user && (
           <ReszletesNezet
             table={selectedTable}
             onDelete={handleDeleteTable}
-            onStatusChange={handleStatusChange}
+            onStatusChangeLocally={handleStatusChangeLocally}
+            onStatusCommit={handleStatusCommit}
             onClose={() => setSelectedTableId(null)}
           />
         )}
