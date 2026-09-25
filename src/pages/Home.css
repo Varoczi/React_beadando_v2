@@ -1,8 +1,13 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .main-content {
   display: flex;
   flex-direction: row;
   gap: 30px;
-  margin-top: 20px;
   width: 100%;
   max-width: 100vw;
   justify-content: center;
@@ -24,14 +29,14 @@
 }
 
 .table-details, .details-placeholder {
-  width: 300px;
+  max-width: 300px;
   flex-shrink: 0;
 }
 
 .with-details::before {
   content: "";
   flex-basis: 300px;
-  flex-shrink: 1000;
+  flex-shrink: 10000;
 }
 
 .add-table-btn {

@@ -3,6 +3,7 @@ import "./Asztal.css";
 
 interface TableProps {
   data: TableData;
+  scale: number;
   isSelected: boolean;
   onSelect: (id: number) => void;
   isConflicted: boolean;
@@ -11,6 +12,7 @@ interface TableProps {
 
 function Asztal({
   data,
+  scale,
   isSelected,
   onSelect,
   isConflicted,
@@ -54,8 +56,8 @@ function Asztal({
     e.stopPropagation();
 
     const tableRect = e.currentTarget.getBoundingClientRect();
-    const offsetX = Math.round(e.clientX - tableRect.left);
-    const offsetY = Math.round(e.clientY - tableRect.top);
+    const offsetX = Math.round((e.clientX - tableRect.left) / scale);
+    const offsetY = Math.round((e.clientY - tableRect.top) / scale);
 
     onDragStart(data.id, offsetX, offsetY);
   };
@@ -66,8 +68,8 @@ function Asztal({
 
     const tableRect = e.currentTarget.getBoundingClientRect();
     const touch = e.touches[0];
-    const offsetX = Math.round(touch.clientX - tableRect.left);
-    const offsetY = Math.round(touch.clientY - tableRect.top);
+    const offsetX = Math.round((touch.clientX - tableRect.left) / scale);
+    const offsetY = Math.round((touch.clientY - tableRect.top) / scale);
 
     onDragStart(data.id, offsetX, offsetY);
   };

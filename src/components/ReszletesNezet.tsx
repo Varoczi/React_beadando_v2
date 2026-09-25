@@ -10,14 +10,16 @@ import toast from "react-hot-toast";
 interface TableDetailsProps {
   table: TableData | null;
   onDelete: (id: number) => void;
-  onStatusChange: (id: number, newStatus: number) => void;
+  onStatusChangeLocally: (id: number, newStatus: number) => void;
+  onStatusCommit: (id: number, finalStatus: number) => void;
   onClose: () => void;
 }
 
 function ReszletesNezet({
   table,
   onDelete,
-  onStatusChange,
+  onStatusChangeLocally,
+  onStatusCommit,
   onClose,
 }: TableDetailsProps) {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -141,7 +143,10 @@ function ReszletesNezet({
               min="1"
               max="10"
               value={table.status}
-              onChange={(e) => onStatusChange(table.id, Number(e.target.value))}
+              onChange={(e) => onStatusChangeLocally(table.id, Number(e.target.value))}
+              onPointerUp={(e) => onStatusCommit(table.id, Number(e.currentTarget.value))}
+              onKeyUp={(e) => onStatusCommit(table.id, Number(e.currentTarget.value))}
+              onBlur={(e) => onStatusCommit(table.id, Number(e.currentTarget.value))}
             />
           )}
         </div>
