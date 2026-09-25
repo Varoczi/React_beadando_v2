@@ -7,13 +7,14 @@ import type { RootState } from "../store/store.ts";
 interface RoomProps {
   tables: TableData[];
   roomSize: { width: number; height: number };
+  scale: number;
   selectedTableId: number | null;
   onSelectTable: (id: number) => void;
   onRoomClick?: (x: number, y: number) => void;
   isPlacementMode?: boolean;
   conflictedTableIds: number[];
   onDragStart: (id: number, offsetX: number, offsetY: number) => void;
-  onDragMove: (clientX: number, clientY: number, roomRect: DOMRect) => void
+  onDragMove: (clientX: number, clientY: number, roomRect: DOMRect) => void;
   onDragEnd: () => void;
   draggingId: number | null;
 }
@@ -21,6 +22,7 @@ interface RoomProps {
 function Terem({
   tables,
   roomSize,
+  scale,
   selectedTableId,
   onSelectTable,
   onRoomClick,
@@ -52,41 +54,51 @@ function Terem({
   return (
     <div className="room-wrapper">
       <div
-        className={`room-area ${isPlacementMode ? "placement-mode" : ""}`}
         style={{
-          width: `${roomSize.width}px`,
-          height: `${roomSize.height}px`,
-          cursor: isPlacementMode ? "crosshair" : "default",
+          width: roomSize.width * scale,
+          height: roomSize.height * scale,
         }}
-        onClick={(e) => {
-          if (!isPlacementMode || !onRoomClick) return;
-
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = Math.round(e.clientX - rect.left);
-          const y = Math.round(e.clientY - rect.top);
-
-          onRoomClick(x, y);
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={onDragEnd}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={onDragEnd}
-        onMouseLeave={onDragEnd}
       >
-        {tables.map((table) => (
-          <Asztal
-            key={table.id}
-            data={table}
-            isSelected={table.id === selectedTableId}
-            isConflicted={conflictedTableIds.includes(table.id)}
-            onSelect={(id) => {
-              if (user) {
-                onSelectTable(id);
-              }
-            }}
-            onDragStart={onDragStart}
-          />
-        ))}
+        <div
+          className={`room-area ${isPlacementMode ? "placement-mode" : ""}`}
+          style={{
+            width: `${roomSize.width}px`,
+            height: `${roomSize.height}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            cursor: isPlacementMode ? "crosshair" : "default",
+          }}
+          onClick={(e) => {
+            if (!isPlacementMode || !onRoomClick) return;
+
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / scale);
+            const y = Math.round((e.clientY - rect.top) / scale);
+
+            onRoomClick(x, y);
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={onDragEnd}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={onDragEnd}
+          onMouseLeave={onDragEnd}
+        >
+          {tables.map((table) => (
+            <Asztal
+              key={table.id}
+              data={table}
+              scale={scale}
+              isSelected={table.id === selectedTableId}
+              isConflicted={conflictedTableIds.includes(table.id)}
+              onSelect={(id) => {
+                if (user) {
+                  onSelectTable(id);
+                }
+              }}
+              onDragStart={onDragStart}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

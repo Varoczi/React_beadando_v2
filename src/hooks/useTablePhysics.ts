@@ -5,6 +5,7 @@ import { getTableDimensions } from "../utils";
 export const useTablePhysics = (
   tables: TableData[],
   roomSize: { width: number; height: number },
+  scale: number,
   onTableMove: (id: number, newPosition: { x: number; y: number }) => void,
   onDragComplete: (id: number) => void,
 ) => {
@@ -74,8 +75,8 @@ export const useTablePhysics = (
     const table = tables.find((t) => t.id === draggingId);
     if (!table) return;
 
-    let newX = Math.round(clientX - roomRect.left - dragOffset.x);
-    let newY = Math.round(clientY - roomRect.top - dragOffset.y);
+    let newX = Math.round((clientX - roomRect.left) / scale - dragOffset.x);
+    let newY = Math.round((clientY - roomRect.top) / scale - dragOffset.y);
 
     const { w, h, buffer } = getTableDimensions(table.type);
 

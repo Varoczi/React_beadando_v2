@@ -24,7 +24,10 @@ function Home() {
 
   const [tables, setTables] = useState<TableData[]>([]);
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
-  const [roomSize, setRoomSize] = useState({ width: 1200, height: 700 });
+  const ROOM_WIDTH = 1200;
+  const ROOM_HEIGHT = 700;
+  const roomSize = { width: ROOM_WIDTH, height: ROOM_HEIGHT };
+  const [scale, setScale] = useState(1);
   const [isAddTableOpen, setIsAddTableOpen] = useState(false);
   const [draftTable, setDraftTable] = useState<Omit<
     TableData,
@@ -37,28 +40,24 @@ function Home() {
       .catch((err) => console.error("Hiba az asztalok betöltésekor:", err));
   }, []);
 
-  const getMaxRoomWidth = () => {
-    const isMobile = window.innerWidth <= 850;
-    const padding = 40;
-    const detailsPanelWidth = user ? 330 : 0;
-    return isMobile
-      ? window.innerWidth - padding
-      : window.innerWidth - detailsPanelWidth - padding;
-  };
-
   useEffect(() => {
     const handleResize = () => {
-      const maxAvailableWidth = getMaxRoomWidth();
-      setRoomSize((prev) =>
-        prev.width > maxAvailableWidth
-          ? { ...prev, width: maxAvailableWidth }
-          : prev,
-      );
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
-  }, [user]);
+      const isMobile = window.innerWidth <= 850;
+      const padding = 40;
+      const detailsPanelWidth = (user && !isMobile) ? 330 : 0; 
+      const maxAvailableWidth = window.innerWidth - detailsPanelWidth - padding;
+      
+      if (maxAvailableWidth < ROOM_WIDTH) {
+        setScale(maxAvailableWidth / ROOM_WIDTH);
+      } else {
+        setScale(1);
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    handleResize()
+    return () => window.removeEventListener('resize', handleResize)
+  }, [user])
 
   useEffect(() => {
     setTables((prevTables) => {
@@ -114,7 +113,7 @@ function Home() {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
-  } = useTablePhysics(tables, roomSize, handleTableMove, handleDragComplete);
+  } = useTablePhysics(tables, roomSize, scale, handleTableMove, handleDragComplete);
 
   const handleDragStartAuth = (
     id: number,
@@ -195,6 +194,7 @@ function Home() {
         <Terem
           tables={tables}
           roomSize={roomSize}
+          scale={scale}
           selectedTableId={selectedTableId}
           onSelectTable={setSelectedTableId}
           onRoomClick={handleRoomClick}
